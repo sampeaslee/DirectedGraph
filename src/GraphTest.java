@@ -8,13 +8,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-
+/**
+ * Filename:   GraphTest.java
+ * Project:    p4
+ * Authors:    Sam Peaslee
+ *
+ * Description: JUnit test that tests the functionality of the Graph class
+ * 
+ */
 class GraphTest {
     
     Graph graph;
     Set<String> vertices; 
- 
-       
+    
     @BeforeAll
     static void setUpBeforeClass() throws Exception {
     }
@@ -29,19 +35,7 @@ class GraphTest {
         graph = null;
         vertices = null;
 
-    }
-    
-    /**
-     * Add new vertex to the graph.
-     *
-     * If vertex is null or already exists,
-     * method ends without adding a vertex or 
-     * throwing an exception.
-     * 
-     * Valid argument conditions:
-     * 1. vertex is non-null
-     * 2. vertex is not already in the graph 
-     */
+    }    
     /*
      * 
      */
@@ -101,21 +95,7 @@ class GraphTest {
         }
 
     }
-    
-    
-    /**
-     * Add the edge from vertex1 to vertex2
-     * to this graph.  (edge is directed and unweighted)
-     * If either vertex does not exist,
-     * add vertex, and add edge, no exception is thrown.
-     * If the edge exists in the graph,
-     * no edge is added and no exception is thrown.
-     * 
-     * Valid argument conditions:
-     * 1. neither vertex is null
-     * 2. both vertices are in the graph 
-     * 3. the edge is not in the graph
-     */
+
     
     /**
      * Add an edge between to vertexes that already exist in the graph 
@@ -424,19 +404,6 @@ class GraphTest {
             }
         }
     }
-    /**
-     * Remove the edge from vertex1 to vertex2
-     * from this graph.  (edge is directed and unweighted)
-     * If either vertex does not exist,
-     * or if an edge from vertex1 to vertex2 does not exist,
-     * no edge is removed and no exception is thrown.
-     * 
-     * Valid argument conditions:
-     * 1. neither vertex is null
-     * 2. both vertices are in the graph 
-     * 3. the edge from vertex1 to vertex2 is in the graph
-     */
-    
     /*
      * Add two vertices with one edge, remove the edge
      * Before removal: 
@@ -582,8 +549,32 @@ class GraphTest {
         }
         if (graph.getAdjacentVerticesOf("A").contains("B")) {
             fail();
+        } 
+   }
+    
+    /*
+     * Check that order is returning the correct amount 
+     * of vertexes in the graph 
+     * 
+     */
+    @Test
+    void test_check_order_properly_increased_and_decreased() {
+        graph.addVertex("A");
+        graph.addVertex("C");
+        graph.addVertex("D");
+        graph.addVertex("C");
+        if(graph.order() != 3) {
+            fail();
+        }     
+        graph.removeVertex("A");
+        graph.removeVertex("B");
+        graph.removeVertex("C");
+        if(graph.order() != 1) {
+            fail();
         }
-
-
+        
     }
+    
+    
+    
 }

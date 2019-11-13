@@ -17,7 +17,7 @@ import java.util.Queue;
 /**
  * Filename:   PackageManager.java
  * Project:    p4
- * Authors:    
+ * Authors:    Sam Peaslee
  * 
  * PackageManager is used to process json package dependency files
  * and provide function that make that information available to other users.
@@ -43,7 +43,7 @@ import java.util.Queue;
  */
 
 public class PackageManager{
-    
+
     // Directed Graph to store packages 
     private Graph graph;
     // Stores number of predecessors for each package
@@ -113,7 +113,6 @@ public class PackageManager{
                 numPred.add(0);
             }
         }   
-        graph.printGraph();
     }
     
     /**
@@ -158,6 +157,8 @@ public class PackageManager{
         // Create list to hold installation order for the package
         ArrayList<String> installOrder = new ArrayList<String>();
         // Get the list of packages that need to be installed before pkg
+        // If there's a cycle in its installation order 
+        // getInstallationOrderAt will throw a CycleExcpetion
         installOrder = getInstallationOrderAt(pkg, installOrder);
         // Add the pkg as the last item in its installation order
         installOrder.add(pkg);
@@ -247,16 +248,16 @@ public class PackageManager{
            numDepends[j] = numPred.get(j);
        }
 
-       int visitedVertexes = 0;// Keeps track of visited nodes in graph
+       int current = 0;// Keeps track of current node in graph
        for(String vertex: allPackages) { 
            if (hasCycleAt(vertex)) {
                throw new CycleException();
            }   
            // Add packages with no dependencies to queue
-           if(numPred.get(visitedVertexes) == 0){
+           if(numPred.get(current) == 0){
                queue.add(vertex);
            }
-           visitedVertexes++;
+           current++;
        }
      
        List<String> adjacent; //Successors of a package
@@ -268,22 +269,22 @@ public class PackageManager{
            // Get all its adjacent vertexes
            adjacent =  graph.getAdjacentVerticesOf(currVertex);
            for(String adj: adjacent) {
-               visitedVertexes = 0; // Reset visited packages to 0
+               current = 0; // Reset visited packages to 0
                // Get the index of the package's successor(s) that corresponds
                // to the index in numInEdges
                for(String v: allPackages) {
                   if(v.equals(adj)) {
                       break;
                   }else {
-                  visitedVertexes++;
+                  current++;
                   }
                }  
               // Decrement the number of dependencies for the package,
               // since one of its dependencies has already been added to
               // the installation order
-              numDepends[visitedVertexes]--;   
+              numDepends[current]--;   
                //If the vertex has no more dependencies add to queue
-               if( numDepends[visitedVertexes] == 0) {;
+               if( numDepends[current] == 0) {;
                    queue.add(adj);
                }
            }
@@ -335,7 +336,7 @@ public class PackageManager{
     
     /**
      * Method that starts at a vertex uses recursion to traverse the 
-     * graph and add the dependencies of the vertex in the correct installation
+     * graph and adds the dependencies of the vertex in the correct installation
      * order.
      * Adds dependencies after recursion hits the base case, which is a vertex 
      * with no adjacent vertexes. 
@@ -378,11 +379,10 @@ public class PackageManager{
     * @param vertex- starting 
     * @return true if a cycle is present, false if not
     */
-   private boolean hasCycleAt(String vertex){        
-       // Queue for traversing graph 
-       // Will store packages with no dependencies (predecessors)
-       // Holds number of dependencies for each vertex
+   private boolean hasCycleAt(String vertex){               
+       // boolean array to mark visited or not
        boolean[] visited = new boolean[allPackages.size()];
+       // Mark vertex visited 
        for(int i = 0; i < allPackages.size(); i++) {
            if(allPackages.get(i).equals(vertex)) {
                visited[i] = true;
@@ -413,6 +413,7 @@ public class PackageManager{
                    return true;
                }else {
                    // Add the successor to the queue 
+                   // Mark as visited
                    if(!visited[j]) {
                        visited[j]= true;
                        q.add(curAdj.get(i));     
@@ -422,9 +423,6 @@ public class PackageManager{
        }    
        return false;
    }
-   public static void main(String[] args) throws Exception  {
-       PackageManager pm = new PackageManager();
-       pm.constructGraph("graphCycle.json");
-       System.out.println(pm.hasCycleAt("A"));
+   public static void main(String[] args) {
    }
 }

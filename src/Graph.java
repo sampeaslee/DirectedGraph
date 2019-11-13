@@ -10,7 +10,7 @@ import java.util.TreeSet;
 /**
  * Filename:   Graph.java
  * Project:    p4
- * Authors:    
+ * Authors:    Sam Peaslee
  * 
  * Directed and unweighted graph implementation
  */
@@ -18,13 +18,10 @@ import java.util.TreeSet;
 public class Graph implements GraphADT{
 
 
+
 class GraphNode<String> {
         /**
          * Private inner class to store a vertex of a graph
-         * 
-         * @author peasl
-         *
-         * @param <T>
          */
         String data;// Data associated with a GraphNode
         // Successors of GraphNode
@@ -48,8 +45,6 @@ class GraphNode<String> {
         GraphNode(String data) {
             this.data = data;
             succesors = new ArrayList<String>();
-          
-       
         }
 
         /**
@@ -76,11 +71,13 @@ class GraphNode<String> {
         }
     }//End of inner GraphNode class
     
+    //List of GraphNodes in the graph
     ArrayList<GraphNode<String>> vertices  =
         new ArrayList<GraphNode<String>>(0);
+    // Set to hold all vertex in the graph
     Set<String> allVertices =  new HashSet<>();
-    int numVertices = 0;
-    int numEdges = 0;
+    int numVertices = 0;//Number of Vertices
+    int numEdges = 0;// Number of edges 
 
     /*
      * Default no-argument constructor
@@ -211,7 +208,9 @@ class GraphNode<String> {
         GraphNode<String> v2 = search(vertex2);
         //IF either vertix is not in Graph do not remove anything 
         if(v1 == null | v2 == null) return;
-       
+        // Get list of adjacent vertices of vertex1
+        // If vertex2 is in the list remove it and 
+        // decrease the number of edges in the graph
         List<String> neighbors = v1.getSuccessors();
         if(neighbors.contains(vertex2)) {
             neighbors.remove(vertex2);
@@ -260,7 +259,7 @@ class GraphNode<String> {
     }
     
 ////////////////////////////////////////////////////////////////////////////////
-       
+    /*Private methods*/    
     /**
      * Searches for a specified vertex in the graph and returns the 
      * GraphNode if the vertex is in the graph, otherwise return null
@@ -278,7 +277,7 @@ class GraphNode<String> {
     /**
      * Prints Graph
      */
-    public void printGraph() {
+    private void printGraph() {
         System.out.println("Printing Graph......");
         System.out.println("List of All Vertexes: ");
         for (int i = 0; i < numVertices; i++) {
@@ -304,20 +303,7 @@ class GraphNode<String> {
         }
     }
     
-       public static void main(String[] args) {
-           Graph graph = new Graph();
-           graph.addVertex("1");
-           graph.addVertex("2");
-           graph.addVertex("3");
-           graph.addVertex("4");
-           graph.addEdge("1", "4");
-           graph.addEdge("1", "3");
-           graph.addEdge("2","1");
-
-           graph.printGraph();
-
-           
-      
+       public static void main(String[] args) {   
        }
     
 }

@@ -10,6 +10,15 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Filename:   PackageManagerTest.java
+ * Project:    p4
+ * Authors:    Sam Peaslee
+ *
+ * Description: JUnit test that tests the functionality of the PackageManager
+ * class 
+ * 
+ */
 class PackageManagerTest {
 
     PackageManager pm;
@@ -25,16 +34,15 @@ class PackageManagerTest {
     @AfterEach
     void tearDown() throws Exception {
         pm = null;
-      }
-   
-    
+      }  
+////////////////////////////////////////////////////////////////////////////   
     /*
-     * Check that test graph adds all packages from the json file to the 
-     * graph 
+     * Check that getAllPackages returns a Set containing all
+     * packages in the graph 
      */
-    
     @Test 
-    void test_consructGraph_makes_graph_correctly() throws Exception {
+    void test_consructGraph_makes_graph_correctly()
+    throws FileNotFoundException, IOException, ParseException {
         pm.constructGraph("Cycles.json");      
         Set<String> allPackages = pm.getAllPackages(); 
         String[] expected = {"A","B","C","D","F"};
@@ -44,9 +52,36 @@ class PackageManagerTest {
                 fail();
             }
             i++;
-        }      
+        }
+        if(allPackages.size() != expected.length) {
+            fail();
+        }
     }
-    
+    /*
+     * Check that FileNotFoundException is thrown by constructGraph
+     */
+    @Test
+    void test_constructGraph_filenotfound() throws Exception {
+        try {
+        pm.constructGraph("invalidFile.json");
+        fail();
+        } catch(FileNotFoundException e) {
+            
+        }
+    }
+    /*
+     * Check that ParseError is thrown by constructGraph
+     */
+    @Test
+    void test_constructGraph_parseerror() throws Exception {
+        try {
+            pm.constructGraph("badJSON.json");
+            fail();
+            } catch(ParseException e) {
+               
+            }
+    }
+       
     
 ///////////////////////////////////////////////////////////////////////////////    
    /** 
@@ -143,7 +178,6 @@ class PackageManagerTest {
    void test_toInstall_no_cycles() throws Exception{
        pm.constructGraph("noCycles.json"); 
        List<String> install = pm.toInstall("A","C");
-       System.out.println(install);
        ArrayList<String> expected = new ArrayList<>() ; 
        expected.add("B");
        expected.add("A");  
@@ -211,9 +245,6 @@ class PackageManagerTest {
        }catch(CycleException e){
            
        }
-       
-       
-
    
     }
    /*
@@ -280,7 +311,7 @@ class PackageManagerTest {
  //////////////////////////////////////////////////////////////////////////////      
    }
    /*
-    * Check that getInstallationOrderForAllPackages throws a cycle,
+    * Check that getPackageWithMaxDependencies throws a cycle,
     * when a cycle is present in the graph 
     */
    @Test 
@@ -302,8 +333,8 @@ class PackageManagerTest {
    }
    
    /*
-    * Check that getInstallationOrderForAllPackages returns valid topological o
-    * order, no cycle present in graph
+    * Check that getPackageWithMaxDependencies returns package with max 
+    *  dependencies, no cycle present in graph
     */
    @Test 
    void test_getPackageWithMaxDependencies_return_vaild_topo_order() 
